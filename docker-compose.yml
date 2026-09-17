@@ -1,0 +1,34 @@
+services:
+
+  db:
+    image: postgis/postgis:16-3.4
+
+    container_name: sankalp-db
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sankalp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sankalp}
+      POSTGRES_DB: ${POSTGRES_DB:-sankalp}
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - sankalp_pgdata:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U sankalp -d sankalp"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+volumes:
+
+  sankalp_pgdata:
