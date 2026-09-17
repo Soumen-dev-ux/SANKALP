@@ -4,18 +4,14 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 
-
-router = APIRouter(
-    prefix="/health",
-    tags=["Health"],
-)
+router = APIRouter()
 
 
-@router.get("")
-def health():
+@router.get("/")
+def health_check():
     return {
         "status": "ok",
-        "service": "sankalp-api",
+        "service": "SANKALP API",
     }
 
 

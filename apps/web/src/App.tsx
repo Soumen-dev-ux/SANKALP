@@ -1,122 +1,179 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import api from "./services/api";
+import "./App.css";
+
+type SystemStatus = {
+  api: boolean;
+  database: boolean;
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [status, setStatus] = useState<SystemStatus>({
+    api: false,
+    database: false,
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkSystem = async () => {
+      try {
+        const apiResponse = await api.get("/health/");
+
+        const dbResponse = await api.get("/health/db");
+
+        setStatus({
+          api: apiResponse.data.status === "ok",
+          database: dbResponse.data.status === "ok",
+        });
+      } catch (error) {
+        console.error("System health check failed:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkSystem();
+  }, []);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
+    <div className="app">
+      <header className="navbar">
         <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
+          <h1>SANKALP</h1>
+          <p>Listen. Understand. Prioritize. Develop.</p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div className="badge">
+          Phase 1 · Foundation
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <main className="container">
+        <section className="hero">
+          <div>
+            <span className="eyebrow">AI-POWERED DEVELOPMENT INTELLIGENCE</span>
+
+            <h2>
+              Building a smarter bridge between
+              <span> citizens and development.</span>
+            </h2>
+
+            <p>
+              SANKALP transforms citizen development requests into
+              structured, geographically grounded intelligence for
+              evidence-based planning.
+            </p>
+          </div>
+        </section>
+
+        <section className="status-section">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">SYSTEM STATUS</span>
+              <h3>Foundation Infrastructure</h3>
+            </div>
+
+            <span className={loading ? "loading" : "online"}>
+              {loading ? "Checking..." : "● System Check Complete"}
+            </span>
+          </div>
+
+          <div className="status-grid">
+            <StatusCard
+              title="Frontend"
+              description="React + TypeScript + Vite"
+              connected={true}
+            />
+
+            <StatusCard
+              title="FastAPI"
+              description="Backend API service"
+              connected={status.api}
+            />
+
+            <StatusCard
+              title="PostgreSQL"
+              description="Application database"
+              connected={status.database}
+            />
+
+            <StatusCard
+              title="PostGIS"
+              description="Geospatial intelligence layer"
+              connected={status.database}
+            />
+          </div>
+        </section>
+
+        <section className="architecture">
+          <span className="eyebrow">CURRENT ARCHITECTURE</span>
+
+          <div className="architecture-flow">
+            <div className="architecture-card">
+              <strong>Citizen</strong>
+              <span>Voice / Text</span>
+            </div>
+
+            <div className="arrow">→</div>
+
+            <div className="architecture-card">
+              <strong>AI Layer</strong>
+              <span>Understand</span>
+            </div>
+
+            <div className="arrow">→</div>
+
+            <div className="architecture-card">
+              <strong>API</strong>
+              <span>FastAPI</span>
+            </div>
+
+            <div className="arrow">→</div>
+
+            <div className="architecture-card">
+              <strong>Data</strong>
+              <span>PostgreSQL + PostGIS</span>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>SANKALP · Phase 1 Foundation</p>
+        <p>Human oversight remains central to every development decision.</p>
+      </footer>
+    </div>
+  );
 }
 
-export default App
+type StatusCardProps = {
+  title: string;
+  description: string;
+  connected: boolean;
+};
+
+function StatusCard({
+  title,
+  description,
+  connected,
+}: StatusCardProps) {
+  return (
+    <div className="status-card">
+      <div className="status-icon">
+        {connected ? "✓" : "!"}
+      </div>
+
+      <div>
+        <h4>{title}</h4>
+        <p>{description}</p>
+      </div>
+
+      <span className={connected ? "connected" : "disconnected"}>
+        {connected ? "Connected" : "Offline"}
+      </span>
+    </div>
+  );
+}
+
+export default App;

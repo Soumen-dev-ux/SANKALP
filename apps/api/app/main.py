@@ -1,14 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes.health import router as health_router
 from app.core.config import settings
+from app.api.routes.health import router as health_router
 
 
 app = FastAPI(
     title=settings.app_name,
-    description="AI-Powered Citizen-to-Development Intelligence Platform",
-    version="1.0.0",
+    debug=settings.app_debug,
 )
 
 
@@ -23,7 +22,8 @@ app.add_middleware(
 
 app.include_router(
     health_router,
-    prefix="/api/v1",
+    prefix="/api/v1/health",
+    tags=["Health"],
 )
 
 
