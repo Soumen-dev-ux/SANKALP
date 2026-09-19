@@ -1,0 +1,57 @@
+[
+  {
+    "region_id": 1,
+    "population": 85000,
+    "population_density": 2400,
+    "income_index": 0.62,
+    "age_0_14_percent": 18.5,
+    "age_15_24_percent": 16.2,
+    "age_25_64_percent": 55.1,
+    "age_65_plus_percent": 10.2,
+    "growth_rate": 3.2
+  },
+  {
+    "region_id": 2,
+    "population": 120000,
+    "population_density": 3100,
+    "income_index": 0.71,
+    "age_0_14_percent": 17.8,
+    "age_15_24_percent": 15.4,
+    "age_25_64_percent": 56.7,
+    "age_65_plus_percent": 10.1,
+    "growth_rate": 2.6
+  },
+  {
+    "region_id": 3,
+    "population": 68000,
+    "population_density": 1500,
+    "income_index": 0.48,
+    "age_0_14_percent": 21.4,
+    "age_15_24_percent": 17.9,
+    "age_25_64_percent": 50.8,
+    "age_65_plus_percent": 9.9,
+    "growth_rate": 4.1
+  },
+  {
+    "region_id": 4,
+    "population": 95000,
+    "population_density": 2100,
+    "income_index": 0.55,
+    "age_0_14_percent": 20.1,
+    "age_15_24_percent": 16.8,
+    "age_25_64_percent": 53.1,
+    "age_65_plus_percent": 10.0,
+    "growth_rate": 3.7
+  },
+  {
+    "region_id": 5,
+    "population": 150000,
+    "population_density": 4200,
+    "income_index": 0.79,
+    "age_0_14_percent": 16.2,
+    "age_15_24_percent": 14.7,
+    "age_25_64_percent": 58.9,
+    "age_65_plus_percent": 10.2,
+    "growth_rate": 2.1
+  }
+]

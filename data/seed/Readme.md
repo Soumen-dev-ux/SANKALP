@@ -1,24 +1,27 @@
-# SANKALP Seed Data
+# SANKALP Seed Dataset
 
-This directory contains structured datasets used for local development,
-testing and demonstrations.
+This directory contains synthetic demonstration data used for local
+development, testing, and demonstrations.
+
+The data is NOT official government data and must not be presented as
+real-world statistics.
 
 ## Files
 
-- `regions.csv`
-- `demographics.csv`
-- `infrastructure.csv`
-- `government_projects.csv`
+- `regions.json`
+- `demographics.json`
+- `infrastructure.json`
+- `government_projects.json`
 
-## Data Policy
+## Relationships
 
-Do not present synthetic/demo values as official statistics.
+All datasets use `region_id` to associate records with a region.
 
-Every real dataset should include:
-
-- source
-- reference year
-- geographic scope
-- dataset description
-
-Production datasets should be validated before entering the analytical pipeline.
+```text
+regions
+   |
+   +-- demographics
+   |
+   +-- infrastructure
+   |
+   +-- government_projects

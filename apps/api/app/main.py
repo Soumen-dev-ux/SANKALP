@@ -17,7 +17,11 @@ from app.api.routes.demographics import (
 from app.api.routes.infrastructure import (
     router as infrastructure_router,
 )
-
+from app.api.routes.government_projects import (
+    router as government_project_router,
+)
+from app.api.routes.regions import router as region_router
+from app.api.routes.demand import router as demand_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -61,6 +65,18 @@ app.include_router(
 )
 app.include_router(
     infrastructure_router,
+    prefix="/api/v1",
+)
+app.include_router(
+    government_project_router,
+    prefix="/api/v1",
+)
+app.include_router(
+    region_router,
+    prefix="/api/v1",
+)
+app.include_router(
+    demand_router,
     prefix="/api/v1",
 )
 

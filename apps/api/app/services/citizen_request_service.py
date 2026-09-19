@@ -18,11 +18,11 @@ def create_citizen_request(
     request = CitizenRequest(
         anonymous_reference=anonymous_reference,
         raw_text=request_data.raw_text,
-        language=request_data.language,
+        language=request_data.language or "en",
         category=request_data.category,
         intent=request_data.intent,
         issue=request_data.issue,
-        region_id=request_data.region_id,
+        region_id=getattr(request_data, "region_id", None),
         latitude=request_data.latitude,
         longitude=request_data.longitude,
         source=request_data.source,

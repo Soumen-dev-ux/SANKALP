@@ -1,0 +1,115 @@
+[
+  {
+    "region_id": 1,
+    "name": "North Community Water Expansion",
+    "category": "Water & Sanitation",
+    "description": "Demo expansion of drinking water coverage.",
+    "status": "Ongoing",
+    "budget": 2500000,
+    "implementing_agency": "Demo Development Department",
+    "start_date": "2026-01-15T00:00:00",
+    "expected_completion_date": "2027-03-31T00:00:00"
+  },
+  {
+    "region_id": 1,
+    "name": "North Health Centre Upgrade",
+    "category": "Healthcare",
+    "description": "Demo upgrade of an existing health facility.",
+    "status": "Planned",
+    "budget": 1800000,
+    "implementing_agency": "Demo Health Department",
+    "start_date": "2026-11-01T00:00:00",
+    "expected_completion_date": "2027-08-31T00:00:00"
+  },
+  {
+    "region_id": 2,
+    "name": "Central Road Improvement",
+    "category": "Transport",
+    "description": "Demo regional road improvement project.",
+    "status": "Completed",
+    "budget": 4500000,
+    "implementing_agency": "Demo Transport Department",
+    "start_date": "2025-01-01T00:00:00",
+    "expected_completion_date": "2026-01-01T00:00:00",
+    "actual_completion_date": "2025-12-20T00:00:00"
+  },
+  {
+    "region_id": 2,
+    "name": "Central Digital Connectivity Expansion",
+    "category": "Digital Connectivity",
+    "description": "Demo expansion of digital connectivity.",
+    "status": "Ongoing",
+    "budget": 3000000,
+    "implementing_agency": "Demo Digital Department",
+    "start_date": "2026-03-01T00:00:00",
+    "expected_completion_date": "2027-02-28T00:00:00"
+  },
+  {
+    "region_id": 3,
+    "name": "South Drinking Water Project",
+    "category": "Water & Sanitation",
+    "description": "Demo drinking water infrastructure project.",
+    "status": "Planned",
+    "budget": 5000000,
+    "implementing_agency": "Demo Water Department",
+    "start_date": "2027-01-01T00:00:00",
+    "expected_completion_date": "2028-06-30T00:00:00"
+  },
+  {
+    "region_id": 3,
+    "name": "South School Expansion",
+    "category": "Education",
+    "description": "Demo school capacity expansion.",
+    "status": "Ongoing",
+    "budget": 2200000,
+    "implementing_agency": "Demo Education Department",
+    "start_date": "2026-05-01T00:00:00",
+    "expected_completion_date": "2027-04-30T00:00:00"
+  },
+  {
+    "region_id": 4,
+    "name": "East Rural Road Upgrade",
+    "category": "Transport",
+    "description": "Demo improvement of regional roads.",
+    "status": "Ongoing",
+    "budget": 3600000,
+    "implementing_agency": "Demo Transport Department",
+    "start_date": "2026-02-01T00:00:00",
+    "expected_completion_date": "2027-01-31T00:00:00"
+  },
+  {
+    "region_id": 4,
+    "name": "East Water Access Programme",
+    "category": "Water & Sanitation",
+    "description": "Demo improvement of water access.",
+    "status": "Planned",
+    "budget": 2800000,
+    "implementing_agency": "Demo Water Department",
+    "start_date": "2027-02-01T00:00:00",
+    "expected_completion_date": "2028-01-31T00:00:00"
+  },
+  {
+    "region_id": 5,
+    "name": "West Healthcare Modernisation",
+    "category": "Healthcare",
+    "description": "Demo modernization of healthcare infrastructure.",
+    "status": "Completed",
+    "budget": 6000000,
+    "implementing_agency": "Demo Health Department",
+    "start_date": "2024-01-01T00:00:00",
+    "expected_completion_date": "2025-12-31T00:00:00",
+    "actual_completion_date": "2025-11-30T00:00:00"
+  },
+  {
+    "region_id": 5,
+    "name": "West Network Expansion",
+    "category": "Digital Connectivity",
+    "description": "Demo network expansion project.",
+    "status": "Completed",
+    "budget": 4200000,
+    "implementing_agency": "Demo Digital Department",
+    "start_date": "2024-06-01T00:00:00",
+    "expected_completion_date": "2025-06-30T00:00:00",
+    "actual_completion_date": "2025-06-15T00:00:00"
+  }
+]

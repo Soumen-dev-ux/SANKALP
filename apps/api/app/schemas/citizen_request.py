@@ -44,6 +44,10 @@ class CitizenRequestCreate(BaseModel):
         le=180
     )
 
+    region_id: int | None = Field(
+        default=None
+    )
+
     source: Literal["web", "voice"] = "web"
 
 

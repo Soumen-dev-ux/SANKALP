@@ -1,0 +1,256 @@
+[
+  {
+    "region_id": 1,
+    "category": "Healthcare",
+    "infrastructure_type": "Hospital",
+    "name": "North Regional Hospital",
+    "capacity": 250,
+    "coverage_percent": 68.5,
+    "quality_score": 0.82,
+    "operational": true
+  },
+  {
+    "region_id": 1,
+    "category": "Education",
+    "infrastructure_type": "School",
+    "name": "North Secondary School",
+    "capacity": 600,
+    "coverage_percent": 72,
+    "quality_score": 0.74,
+    "operational": true
+  },
+  {
+    "region_id": 1,
+    "category": "Water & Sanitation",
+    "infrastructure_type": "Water Supply Facility",
+    "name": "North Water Supply Facility",
+    "capacity": 50000,
+    "coverage_percent": 61,
+    "quality_score": 0.68,
+    "operational": true
+  },
+  {
+    "region_id": 1,
+    "category": "Transport",
+    "infrastructure_type": "Road",
+    "name": "North Main Road",
+    "capacity": 5000,
+    "coverage_percent": 78,
+    "quality_score": 0.59,
+    "operational": true
+  },
+  {
+    "region_id": 1,
+    "category": "Digital Connectivity",
+    "infrastructure_type": "Network Tower",
+    "name": "North Network Tower",
+    "capacity": 10000,
+    "coverage_percent": 83,
+    "quality_score": 0.88,
+    "operational": true
+  },
+
+  {
+    "region_id": 2,
+    "category": "Healthcare",
+    "infrastructure_type": "Hospital",
+    "name": "Central Regional Hospital",
+    "capacity": 400,
+    "coverage_percent": 82,
+    "quality_score": 0.88,
+    "operational": true
+  },
+  {
+    "region_id": 2,
+    "category": "Education",
+    "infrastructure_type": "School",
+    "name": "Central Secondary School",
+    "capacity": 850,
+    "coverage_percent": 86,
+    "quality_score": 0.84,
+    "operational": true
+  },
+  {
+    "region_id": 2,
+    "category": "Water & Sanitation",
+    "infrastructure_type": "Water Supply Facility",
+    "name": "Central Water Supply Facility",
+    "capacity": 80000,
+    "coverage_percent": 88,
+    "quality_score": 0.91,
+    "operational": true
+  },
+  {
+    "region_id": 2,
+    "category": "Transport",
+    "infrastructure_type": "Road",
+    "name": "Central Main Road",
+    "capacity": 8500,
+    "coverage_percent": 91,
+    "quality_score": 0.86,
+    "operational": true
+  },
+  {
+    "region_id": 2,
+    "category": "Digital Connectivity",
+    "infrastructure_type": "Network Tower",
+    "name": "Central Network Tower",
+    "capacity": 15000,
+    "coverage_percent": 94,
+    "quality_score": 0.93,
+    "operational": true
+  },
+
+  {
+    "region_id": 3,
+    "category": "Healthcare",
+    "infrastructure_type": "Hospital",
+    "name": "South Regional Hospital",
+    "capacity": 150,
+    "coverage_percent": 52,
+    "quality_score": 0.55,
+    "operational": true
+  },
+  {
+    "region_id": 3,
+    "category": "Education",
+    "infrastructure_type": "School",
+    "name": "South Secondary School",
+    "capacity": 400,
+    "coverage_percent": 58,
+    "quality_score": 0.61,
+    "operational": true
+  },
+  {
+    "region_id": 3,
+    "category": "Water & Sanitation",
+    "infrastructure_type": "Water Supply Facility",
+    "name": "South Water Supply Facility",
+    "capacity": 35000,
+    "coverage_percent": 43,
+    "quality_score": 0.47,
+    "operational": true
+  },
+  {
+    "region_id": 3,
+    "category": "Transport",
+    "infrastructure_type": "Road",
+    "name": "South Main Road",
+    "capacity": 3000,
+    "coverage_percent": 54,
+    "quality_score": 0.49,
+    "operational": true
+  },
+  {
+    "region_id": 3,
+    "category": "Digital Connectivity",
+    "infrastructure_type": "Network Tower",
+    "name": "South Network Tower",
+    "capacity": 7000,
+    "coverage_percent": 59,
+    "quality_score": 0.57,
+    "operational": true
+  },
+
+  {
+    "region_id": 4,
+    "category": "Healthcare",
+    "infrastructure_type": "Hospital",
+    "name": "East Regional Hospital",
+    "capacity": 220,
+    "coverage_percent": 63,
+    "quality_score": 0.69,
+    "operational": true
+  },
+  {
+    "region_id": 4,
+    "category": "Education",
+    "infrastructure_type": "School",
+    "name": "East Secondary School",
+    "capacity": 550,
+    "coverage_percent": 67,
+    "quality_score": 0.68,
+    "operational": true
+  },
+  {
+    "region_id": 4,
+    "category": "Water & Sanitation",
+    "infrastructure_type": "Water Supply Facility",
+    "name": "East Water Supply Facility",
+    "capacity": 45000,
+    "coverage_percent": 57,
+    "quality_score": 0.59,
+    "operational": true
+  },
+  {
+    "region_id": 4,
+    "category": "Transport",
+    "infrastructure_type": "Road",
+    "name": "East Main Road",
+    "capacity": 4200,
+    "coverage_percent": 69,
+    "quality_score": 0.64,
+    "operational": true
+  },
+  {
+    "region_id": 4,
+    "category": "Digital Connectivity",
+    "infrastructure_type": "Network Tower",
+    "name": "East Network Tower",
+    "capacity": 8500,
+    "coverage_percent": 71,
+    "quality_score": 0.72,
+    "operational": true
+  },
+
+  {
+    "region_id": 5,
+    "category": "Healthcare",
+    "infrastructure_type": "Hospital",
+    "name": "West Regional Hospital",
+    "capacity": 500,
+    "coverage_percent": 91,
+    "quality_score": 0.94,
+    "operational": true
+  },
+  {
+    "region_id": 5,
+    "category": "Education",
+    "infrastructure_type": "School",
+    "name": "West Secondary School",
+    "capacity": 1100,
+    "coverage_percent": 93,
+    "quality_score": 0.91,
+    "operational": true
+  },
+  {
+    "region_id": 5,
+    "category": "Water & Sanitation",
+    "infrastructure_type": "Water Supply Facility",
+    "name": "West Water Supply Facility",
+    "capacity": 110000,
+    "coverage_percent": 95,
+    "quality_score": 0.96,
+    "operational": true
+  },
+  {
+    "region_id": 5,
+    "category": "Transport",
+    "infrastructure_type": "Road",
+    "name": "West Main Road",
+    "capacity": 11000,
+    "coverage_percent": 96,
+    "quality_score": 0.92,
+    "operational": true
+  },
+  {
+    "region_id": 5,
+    "category": "Digital Connectivity",
+    "infrastructure_type": "Network Tower",
+    "name": "West Network Tower",
+    "capacity": 22000,
+    "coverage_percent": 97,
+    "quality_score": 0.96,
+    "operational": true
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "North Region",
+    "code": "REG-001",
+    "state": "Demo State",
+    "country": "India"
+  },
+  {
+    "id": 2,
+    "name": "Central Region",
+    "code": "REG-002",
+    "state": "Demo State",
+    "country": "India"
+  },
+  {
+    "id": 3,
+    "name": "South Region",
+    "code": "REG-003",
+    "state": "Demo State",
+    "country": "India"
+  },
+  {
+    "id": 4,
+    "name": "East Region",
+    "code": "REG-004",
+    "state": "Demo State",
+    "country": "India"
+  },
+  {
+    "id": 5,
+    "name": "West Region",
+    "code": "REG-005",
+    "state": "Demo State",
+    "country": "India"
+  }
+]
