@@ -10,6 +10,13 @@ from app.db.seed import seed_db
 import app.models  # noqa: F401
 from app.api.routes.health import router as health_router
 from app.api.routes.citizen_requests import router as citizen_request_router
+# pyrefly: ignore [missing-import]
+from app.api.routes.demographics import (
+    router as demographic_router,
+)
+from app.api.routes.infrastructure import (
+    router as infrastructure_router,
+)
 
 
 @asynccontextmanager
@@ -46,6 +53,14 @@ app.include_router(
 )
 app.include_router(
     citizen_request_router,
+    prefix="/api/v1",
+)
+app.include_router(
+    demographic_router,
+    prefix="/api/v1",
+)
+app.include_router(
+    infrastructure_router,
     prefix="/api/v1",
 )
 
