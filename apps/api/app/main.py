@@ -22,6 +22,12 @@ from app.api.routes.government_projects import (
 )
 from app.api.routes.regions import router as region_router
 from app.api.routes.demand import router as demand_router
+from app.api.routes.infrastructure_gap import (
+    router as infrastructure_gap_router,
+)
+from app.api.routes.development_insights import(
+    router as development_insight_router
+)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -79,7 +85,14 @@ app.include_router(
     demand_router,
     prefix="/api/v1",
 )
-
+app.include_router(
+    infrastructure_gap_router,
+    prefix="/api/v1"
+)
+app.include_router(
+    development_insight_router,
+    prefix="/api/v1"
+)
 
 @app.get("/")
 def root():
