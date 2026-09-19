@@ -1,13 +1,32 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app.db.base import Base
+from app.db.session import SessionLocal, engine
+from app.db.seed import seed_db
+import app.models  # noqa: F401
 from app.api.routes.health import router as health_router
+from app.api.routes.citizen_requests import router as citizen_request_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    try:
+        seed_db(db)
+    finally:
+        db.close()
+    yield
 
 
 app = FastAPI(
     title=settings.app_name,
     debug=settings.app_debug,
+    lifespan=lifespan,
 )
 
 
@@ -24,6 +43,10 @@ app.include_router(
     health_router,
     prefix="/api/v1/health",
     tags=["Health"],
+)
+app.include_router(
+    citizen_request_router,
+    prefix="/api/v1",
 )
 
 

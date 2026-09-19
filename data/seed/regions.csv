@@ -1,1 +1,7 @@
 code,name,country_code,parent_region_code
+IND,India,IN,
+IND-MH,Maharashtra,IN,IND
+IND-MH-MUM,Mumbai,IN,IND-MH
+IND-DL,Delhi,IN,IND
+IND-KA,Karnataka,IN,IND
+IND-KA-BLR,Bengaluru,IN,IND-KA

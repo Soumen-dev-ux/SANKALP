@@ -1,177 +1,260 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+import CitizenRequestForm from "./components/CitizenRequestForm";
+import AnalysisResult from "./components/AnalysisResult";
+import SubmissionSuccess from "./components/SubmissionSuccess"
 import api from "./services/api";
+import LocationConfirmation from "./components/LocationConfirmation";
+
+import type {
+  CitizenAnalysis,
+  CitizenRequestResponse,
+} from "./types/citizenRequest";
+
 import "./App.css";
 
-type SystemStatus = {
-  api: boolean;
-  database: boolean;
-};
+type AppStep =
+  | "input"
+  | "analysis"
+  | "location"
+  | "success";
 
 function App() {
-  const [status, setStatus] = useState<SystemStatus>({
-    api: false,
-    database: false,
-  });
+  const [step, setStep] =
+    useState<AppStep>("input");
 
-  const [loading, setLoading] = useState(true);
+  const [analysis, setAnalysis] =
+    useState<CitizenAnalysis | null>(null);
 
-  useEffect(() => {
-    const checkSystem = async () => {
-      try {
-        const apiResponse = await api.get("/health/");
+  const [originalText, setOriginalText] =
+    useState("");
 
-        const dbResponse = await api.get("/health/db");
+  const [reference, setReference] =
+    useState("");
 
-        setStatus({
-          api: apiResponse.data.status === "ok",
-          database: dbResponse.data.status === "ok",
-        });
-      } catch (error) {
-        console.error("System health check failed:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [locationText, setLocationText] =
+    useState<string | null>(null);
 
-    checkSystem();
-  }, []);
+  const [, setLatitude] =
+    useState<number | null>(null);
+
+  const [, setLongitude] =
+    useState<number | null>(null);
+
+  const [inputSource, setInputSource] =
+    useState<"web" | "voice">("web");
+
+  const handleAnalysisComplete = (
+    result: CitizenAnalysis,
+    text: string,
+    source: "web" | "voice"
+  ) => {
+    setAnalysis(result);
+    setOriginalText(text);
+    setInputSource(source);
+    setStep("analysis");
+  };
+
+  const handleAnalysisConfirm = () => {
+    if (!analysis) {
+      return;
+    }
+
+    setLocationText(
+      analysis.location_text
+    );
+
+    setStep("location");
+  };
+
+  const handleLocationConfirm = async (
+    lat: number,
+    lng: number,
+    location: string
+  ) => {
+    setLatitude(lat);
+    setLongitude(lng);
+    setLocationText(location);
+
+    await submitRequest(
+      lat,
+      lng
+    );
+  };
+
+  const handleSkipLocation = async () => {
+    await submitRequest(null, null);
+  };
+
+  const submitRequest = async (
+    lat: number | null,
+    lng: number | null
+  ) => {
+    if (!analysis) {
+      return;
+    }
+
+    try {
+      const response =
+        await api.post<CitizenRequestResponse>(
+          "/requests",
+          {
+            raw_text: originalText,
+
+            language: analysis.language,
+            category: analysis.category,
+            intent: analysis.intent,
+            issue: analysis.issue,
+
+            latitude: lat,
+            longitude: lng,
+
+            source: inputSource,
+          }
+        );
+
+      setReference(
+        response.data.anonymous_reference
+      );
+
+      setStep("success");
+
+    } catch (error) {
+      console.error(
+        "Failed to submit request:",
+        error
+      );
+
+      alert(
+        "Unable to submit the request. Please try again."
+      );
+    }
+  };
+
+  const handleEdit = () => {
+    setStep("input");
+  };
+
+  const handleCreateAnother = () => {
+    setAnalysis(null);
+    setOriginalText("");
+    setReference("");
+    setStep("input");
+  };
 
   return (
     <div className="app">
+
       <header className="navbar">
-        <div>
-          <h1>SANKALP</h1>
-          <p>Listen. Understand. Prioritize. Develop.</p>
-        </div>
 
-        <div className="badge">
-          Phase 1 · Foundation
-        </div>
-      </header>
-
-      <main className="container">
-        <section className="hero">
-          <div>
-            <span className="eyebrow">AI-POWERED DEVELOPMENT INTELLIGENCE</span>
-
-            <h2>
-              Building a smarter bridge between
-              <span> citizens and development.</span>
-            </h2>
-
-            <p>
-              SANKALP transforms citizen development requests into
-              structured, geographically grounded intelligence for
-              evidence-based planning.
-            </p>
+        <div className="brand">
+          <div className="brand-mark">
+            S
           </div>
-        </section>
 
-        <section className="status-section">
-          <div className="section-heading">
-            <div>
-              <span className="eyebrow">SYSTEM STATUS</span>
-              <h3>Foundation Infrastructure</h3>
-            </div>
+          <div>
+            <strong>SANKALP</strong>
 
-            <span className={loading ? "loading" : "online"}>
-              {loading ? "Checking..." : "● System Check Complete"}
+            <span>
+              Citizen Development Intelligence
             </span>
           </div>
+        </div>
 
-          <div className="status-grid">
-            <StatusCard
-              title="Frontend"
-              description="React + TypeScript + Vite"
-              connected={true}
-            />
+        <div className="language-indicator">
+          EN · বাংলা · हिन्दी
+        </div>
 
-            <StatusCard
-              title="FastAPI"
-              description="Backend API service"
-              connected={status.api}
-            />
+      </header>
 
-            <StatusCard
-              title="PostgreSQL"
-              description="Application database"
-              connected={status.database}
-            />
+      <main className="main-content">
 
-            <StatusCard
-              title="PostGIS"
-              description="Geospatial intelligence layer"
-              connected={status.database}
-            />
+        <div className="progress">
+
+          <div
+            className={
+              step === "input"
+                ? "progress-step active"
+                : "progress-step"
+            }
+          >
+            1. Tell us
           </div>
-        </section>
 
-        <section className="architecture">
-          <span className="eyebrow">CURRENT ARCHITECTURE</span>
-
-          <div className="architecture-flow">
-            <div className="architecture-card">
-              <strong>Citizen</strong>
-              <span>Voice / Text</span>
-            </div>
-
-            <div className="arrow">→</div>
-
-            <div className="architecture-card">
-              <strong>AI Layer</strong>
-              <span>Understand</span>
-            </div>
-
-            <div className="arrow">→</div>
-
-            <div className="architecture-card">
-              <strong>API</strong>
-              <span>FastAPI</span>
-            </div>
-
-            <div className="arrow">→</div>
-
-            <div className="architecture-card">
-              <strong>Data</strong>
-              <span>PostgreSQL + PostGIS</span>
-            </div>
+          <div
+            className={
+              step === "analysis"
+                ? "progress-step active"
+                : "progress-step"
+            }
+          >
+            2. Review
           </div>
-        </section>
+
+          <div
+            className={
+              step === "location"
+                ? "progress-step active"
+                : "progress-step"
+            }
+          >
+            3. Location
+          </div>
+
+          <div
+            className={
+              step === "success"
+                ? "progress-step active"
+                : "progress-step"
+            }
+          >
+            4. Submitted
+          </div>
+
+        </div>
+
+        {step === "input" && (
+          <CitizenRequestForm
+            onAnalysisComplete={
+              handleAnalysisComplete
+            }
+          />
+        )}
+
+        {step === "analysis" &&
+          analysis && (
+            <AnalysisResult
+              analysis={analysis}
+              originalText={originalText}
+              onConfirm={handleAnalysisConfirm}
+              onEdit={handleEdit}
+            />
+          )}
+
+        {step === "location" && (
+          <LocationConfirmation
+            locationText={locationText}
+            onConfirm={handleLocationConfirm}
+            onSkip={handleSkipLocation}
+          />
+        )}
+
+        {step === "success" && (
+          <SubmissionSuccess
+            reference={reference}
+            onCreateAnother={
+              handleCreateAnother
+            }
+          />
+        )}
+
       </main>
 
-      <footer>
-        <p>SANKALP · Phase 1 Foundation</p>
-        <p>Human oversight remains central to every development decision.</p>
+      <footer className="footer">
+        SANKALP · Listen. Understand. Prioritize.
+        Develop.
       </footer>
-    </div>
-  );
-}
 
-type StatusCardProps = {
-  title: string;
-  description: string;
-  connected: boolean;
-};
-
-function StatusCard({
-  title,
-  description,
-  connected,
-}: StatusCardProps) {
-  return (
-    <div className="status-card">
-      <div className="status-icon">
-        {connected ? "✓" : "!"}
-      </div>
-
-      <div>
-        <h4>{title}</h4>
-        <p>{description}</p>
-      </div>
-
-      <span className={connected ? "connected" : "disconnected"}>
-        {connected ? "Connected" : "Offline"}
-      </span>
     </div>
   );
 }
