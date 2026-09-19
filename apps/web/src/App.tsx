@@ -1,262 +1,69 @@
-import { useState } from "react";
+import { BrowserRouter, Routes, Route, NavLink, Link } from "react-router-dom";
 
-import CitizenRequestForm from "./components/CitizenRequestForm";
-import AnalysisResult from "./components/AnalysisResult";
-import SubmissionSuccess from "./components/SubmissionSuccess"
-import api from "./services/api";
-import LocationConfirmation from "./components/LocationConfirmation";
+import CitizenPage from "./pages/CitizenPage";
+import DashboardPage from "./pages/DashboardPage";
 
-import type {
-  CitizenAnalysis,
-  CitizenRequestResponse,
-} from "./types/citizenRequest";
-
-import "./App.css";
-
-type AppStep =
-  | "input"
-  | "analysis"
-  | "location"
-  | "success";
-
-function App() {
-  const [step, setStep] =
-    useState<AppStep>("input");
-
-  const [analysis, setAnalysis] =
-    useState<CitizenAnalysis | null>(null);
-
-  const [originalText, setOriginalText] =
-    useState("");
-
-  const [reference, setReference] =
-    useState("");
-
-  const [locationText, setLocationText] =
-    useState<string | null>(null);
-
-  const [, setLatitude] =
-    useState<number | null>(null);
-
-  const [, setLongitude] =
-    useState<number | null>(null);
-
-  const [inputSource, setInputSource] =
-    useState<"web" | "voice">("web");
-
-  const handleAnalysisComplete = (
-    result: CitizenAnalysis,
-    text: string,
-    source: "web" | "voice"
-  ) => {
-    setAnalysis(result);
-    setOriginalText(text);
-    setInputSource(source);
-    setStep("analysis");
-  };
-
-  const handleAnalysisConfirm = () => {
-    if (!analysis) {
-      return;
-    }
-
-    setLocationText(
-      analysis.location_text
-    );
-
-    setStep("location");
-  };
-
-  const handleLocationConfirm = async (
-    lat: number,
-    lng: number,
-    location: string
-  ) => {
-    setLatitude(lat);
-    setLongitude(lng);
-    setLocationText(location);
-
-    await submitRequest(
-      lat,
-      lng
-    );
-  };
-
-  const handleSkipLocation = async () => {
-    await submitRequest(null, null);
-  };
-
-  const submitRequest = async (
-    lat: number | null,
-    lng: number | null
-  ) => {
-    if (!analysis) {
-      return;
-    }
-
-    try {
-      const response =
-        await api.post<CitizenRequestResponse>(
-          "/requests",
-          {
-            raw_text: originalText,
-
-            language: analysis.language,
-            category: analysis.category,
-            intent: analysis.intent,
-            issue: analysis.issue,
-
-            latitude: lat,
-            longitude: lng,
-
-            source: inputSource,
-          }
-        );
-
-      setReference(
-        response.data.anonymous_reference
-      );
-
-      setStep("success");
-
-    } catch (error) {
-      console.error(
-        "Failed to submit request:",
-        error
-      );
-
-      alert(
-        "Unable to submit the request. Please try again."
-      );
-    }
-  };
-
-  const handleEdit = () => {
-    setStep("input");
-  };
-
-  const handleCreateAnother = () => {
-    setAnalysis(null);
-    setOriginalText("");
-    setReference("");
-    setStep("input");
-  };
-
+export default function App() {
   return (
-    <div className="app">
+    <BrowserRouter>
+      <div className="min-h-screen bg-slate-50/60 font-sans text-slate-800 antialiased">
+        {/* Sticky Glassmorphic Header */}
+        <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/80 backdrop-blur-md transition-all">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
+            <Link
+              to="/"
+              className="group flex items-center gap-3 transition-transform active:scale-95"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 font-extrabold text-white shadow-md shadow-blue-500/20 group-hover:shadow-blue-500/35 transition-all">
+                S
+              </div>
+              <div className="flex flex-col">
+                <span className="text-lg font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
+                  SANKALP
+                </span>
+                <span className="text-[11px] font-medium text-slate-500 tracking-wide uppercase">
+                  Citizen Intelligence Platform
+                </span>
+              </div>
+            </Link>
 
-      <header className="navbar">
+            <nav className="flex items-center gap-1.5 rounded-full bg-slate-100/80 p-1 border border-slate-200/60 shadow-inner">
+              <NavLink
+                to="/"
+                end
+                className={({ isActive }) =>
+                  `rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                    isActive
+                      ? "bg-white text-blue-600 shadow-sm shadow-slate-200"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
+                  }`
+                }
+              >
+                Citizen Voice
+              </NavLink>
 
-        <div className="brand">
-          <div className="brand-mark">
-            S
+              <NavLink
+                to="/dashboard"
+                className={({ isActive }) =>
+                  `rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                    isActive
+                      ? "bg-white text-blue-600 shadow-sm shadow-slate-200"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
+                  }`
+                }
+              >
+                Intelligence Dashboard
+              </NavLink>
+            </nav>
           </div>
+        </header>
 
-          <div>
-            <strong>SANKALP</strong>
-
-            <span>
-              Citizen Development Intelligence
-            </span>
-          </div>
-        </div>
-
-        <div className="language-indicator">
-          EN · বাংলা · हिन्दी
-        </div>
-
-      </header>
-
-      <main className="main-content">
-
-        <div className="progress">
-
-          <div
-            className={
-              step === "input"
-                ? "progress-step active"
-                : "progress-step"
-            }
-          >
-            1. Tell us
-          </div>
-
-          <div
-            className={
-              step === "analysis"
-                ? "progress-step active"
-                : "progress-step"
-            }
-          >
-            2. Review
-          </div>
-
-          <div
-            className={
-              step === "location"
-                ? "progress-step active"
-                : "progress-step"
-            }
-          >
-            3. Location
-          </div>
-
-          <div
-            className={
-              step === "success"
-                ? "progress-step active"
-                : "progress-step"
-            }
-          >
-            4. Submitted
-          </div>
-
-        </div>
-
-        {step === "input" && (
-          <CitizenRequestForm
-            onAnalysisComplete={
-              handleAnalysisComplete
-            }
-          />
-        )}
-
-        {step === "analysis" &&
-          analysis && (
-            <AnalysisResult
-              analysis={analysis}
-              originalText={originalText}
-              onConfirm={handleAnalysisConfirm}
-              onEdit={handleEdit}
-            />
-          )}
-
-        {step === "location" && (
-          <LocationConfirmation
-            locationText={locationText}
-            onConfirm={handleLocationConfirm}
-            onSkip={handleSkipLocation}
-          />
-        )}
-
-        {step === "success" && (
-          <SubmissionSuccess
-            reference={reference}
-            onCreateAnother={
-              handleCreateAnother
-            }
-          />
-        )}
-
-      </main>
-
-      <footer className="footer">
-        SANKALP · Listen. Understand. Prioritize.
-        Develop.
-      </footer>
-
-    </div>
+        {/* Main Routes */}
+        <Routes>
+          <Route path="/" element={<CitizenPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
-
-export default App;
