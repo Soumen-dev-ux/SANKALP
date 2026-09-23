@@ -1,5 +1,9 @@
+from app.schemas.confidence import UnderstandingConfidence
 from app.services.ai.base import CitizenUnderstanding
-
+from app.schemas.ai_understanding import StructuredCitizenUnderstanding
+from app.schemas.location import LocationEntity
+from app.services.ai.normalizer import normalize_understanding
+from app.services.ai.confidence import make_confidence
 
 class MockAIProvider:
 
@@ -131,13 +135,73 @@ class MockAIProvider:
             category = "Digital Connectivity"
             issue = "Digital Connectivity"
 
-        return CitizenUnderstanding(
-            language=language,
-            category=category,
-            intent="Report Development Need",
-            issue=issue,
-            location_text=self.extract_location(text),
+        intent = "Report Development Need"
+        location_text = self.extract_location(text)
+        location_type = "unknown"
+
+        if location_text:
+            loc_lower = location_text.lower()
+            if any(w in loc_lower for w in ["village", "গ্রাম", "गांव", "गाँव"]):
+                location_type = "village"
+            elif any(w in loc_lower for w in ["town", "city", "শহর", "शहर"]):
+                location_type = "town"
+            elif any(w in loc_lower for w in ["ward", "ওয়ার্ড", "ওয়ার্ড", "वार्ड"]):
+                location_type = "ward"
+            elif any(w in loc_lower for w in ["area", "locality", "এলাকা", "इलाका", "इलाके"]):
+                location_type = "area"
+            elif any(w in loc_lower for w in ["district", "জেলা", "जिला"]):
+                location_type = "district"
+
+        location_name = (
+            None
+            if location_type in ("village", "area", "town", "locality", "ward", "unknown")
+            else location_text
         )
+
+        location = LocationEntity(
+            text=location_text,
+            type=location_type,
+            name=location_name,
+            ward=None,
+            district=None,
+            landmark=None,
+        )
+
+        confidence = UnderstandingConfidence(
+            language=make_confidence(
+                0.99,
+                "Language explicitly identified from the request."
+            ),
+            category=make_confidence(
+                0.95,
+                "Drinking water is a clear match for Water & Sanitation."
+            ),
+            intent=make_confidence(
+                0.92,
+                "The citizen is clearly reporting a development need."
+            ),
+            issue=make_confidence(
+                0.94,
+                "The request explicitly refers to drinking water."
+            ),
+            location=make_confidence(
+                0.90,
+                "The phrase 'in our village' explicitly identifies a village context."
+            ),
+            overall_score=0.94,
+            review_required=False,
+        )
+
+        structured = StructuredCitizenUnderstanding(
+            language=language or "other",
+            category=category or "Other",
+            intent=intent or "Report Development Need",
+            issue=issue or "General Development Issue",
+            location=location,
+            confidence=confidence,
+        )
+
+        return normalize_understanding(structured)
 
     # -------------------------
     # LANGUAGE DETECTION
@@ -174,8 +238,8 @@ class MockAIProvider:
             ("আমাদের এলাকায়", "আমাদের এলাকায়"),
             ("আমাদের শহরে", "আমাদের শহরে"),
             ("আমাদের ওয়ার্ডে", "আমাদের ওয়ার্ডে"),
-            ("हमारे गांव में", "हमारे इलाके में"),
-            ("हमारे गाँव में", "हमारे इलाके में"),
+            ("हमारे गांव में", "हमारे गांव में"),
+            ("हमारे गाँव में", "हमारे गाँव में"),
             ("हमारे इलाके में", "हमारे इलाके में"),
             ("हमारे शहर में", "हमारे शहर में"),
             ("हमारे वार्ड में", "हमारे वार्ड में"),
@@ -213,4 +277,4 @@ class MockAIProvider:
             if keyword in text_lower:
                 return text.strip()
 
-        return None 
+        return None

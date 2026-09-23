@@ -22,6 +22,9 @@ from app.services.ai.ai_analysis_service import (
     analyze_citizen_text,
 )
 
+from app.schemas.duplicate import DuplicateCheckResponse
+from app.services.duplicate_service import check_for_duplicates
+
 
 router = APIRouter(
     prefix="/requests",
@@ -85,3 +88,20 @@ def get_citizen_request(
         )
 
     return request
+
+@router.post(
+    "/requests/duplicate-check",
+    response_model=DuplicateCheckResponse,
+)
+def duplicate_check(
+    payload: CitizenRequestCreate,
+    db: Session = Depends(get_db),
+):
+    return check_for_duplicates(
+        db=db,
+        text=payload.raw_text,
+        category=payload.category,
+        region_id=payload.region_id,
+        latitude=payload.latitude,
+        longitude=payload.longitude,
+    )

@@ -93,4 +93,66 @@ export const getRegionRequests = async (
   return response.data;
 };
 
+export interface DuplicateCandidate {
+  request_id: number;
+  anonymous_reference: string;
+  category: string | null;
+  similarity_score: number;
+  match_level: string;
+  reason: string;
+}
+
+export interface DuplicateCheckResponse {
+  is_potential_duplicate: boolean;
+  candidates: DuplicateCandidate[];
+}
+
+export const checkDuplicateRequests = async (
+  payload: {
+    raw_text: string;
+    category?: string | null;
+    region_id?: number | null;
+    latitude?: number | null;
+    longitude?: number | null;
+  }
+): Promise<DuplicateCheckResponse> => {
+  const response = await api.post<DuplicateCheckResponse>(
+    "/requests/duplicate-check",
+    {
+      ...payload,
+      source: "web",
+    }
+  );
+
+  return response.data;
+};
+
+export interface HumanReview {
+  request_id: number;
+  review_status: "not_required" | "pending" | "approved" | "corrected";
+  reviewer_note: string | null;
+  reviewed_category: string | null;
+  reviewed_issue: string | null;
+  reviewed_location: string | null;
+  reviewed_at: string | null;
+}
+
+export const reviewCitizenRequest = async (
+  requestId: number,
+  payload: {
+    status: "approved" | "corrected";
+    reviewer_note?: string | null;
+    reviewed_category?: string | null;
+    reviewed_issue?: string | null;
+    reviewed_location?: string | null;
+  }
+): Promise<HumanReview> => {
+  const response = await api.post<HumanReview>(
+    `/requests/${requestId}/review`,
+    payload
+  );
+
+  return response.data;
+};
+
 export default api;

@@ -1,3 +1,5 @@
+from app.schemas.confidence import UnderstandingConfidence
+from app.schemas.location import LocationEntity
 from unicodedata import category
 from pydantic import BaseModel, Field
 
@@ -13,4 +15,5 @@ class CitizenAnalysisResponse(BaseModel):
     category: str | None
     intent: str | None
     issue: str | None
-    location_text: str | None
+    location: LocationEntity
+    confidence: UnderstandingConfidence

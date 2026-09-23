@@ -1,40 +1,33 @@
-from app.services.ai.mock_provider import MockAIProvider
+from app.services.ai.provider import get_ai_provider
 
 
-provider = MockAIProvider()
+def test_generic_village_location():
+    provider = get_ai_provider()
 
-
-def test_english_location():
-
-    result = provider.extract_location(
-        "There is no drinking water in our village"
+    result = provider.understand(
+        "There is no drinking water facility in our village."
     )
 
-    assert result == "in our village"
+    assert result.location.location_type == "village"
+    assert result.location.name is None
 
 
-def test_bengali_location():
+def test_generic_area_location():
+    provider = get_ai_provider()
 
-    result = provider.extract_location(
-        "আমাদের এলাকায় পানীয় জলের সমস্যা হচ্ছে"
+    result = provider.understand(
+        "There is no proper road in our area."
     )
 
-    assert result == "আমাদের এলাকায়"
+    assert result.location.location_type == "area"
 
 
-def test_hindi_location():
+def test_location_is_optional():
+    provider = get_ai_provider()
 
-    result = provider.extract_location(
-        "हमारे इलाके में पीने के पानी की समस्या है"
+    result = provider.understand(
+        "There is no proper drinking water facility."
     )
 
-    assert result == "हमारे इलाके में"
-
-
-def test_no_location():
-
-    result = provider.extract_location(
-        "The hospital needs better facilities"
-    )
-
-    assert result is None
+    assert result.location.location_type == "unknown"
+    assert result.location.name is None

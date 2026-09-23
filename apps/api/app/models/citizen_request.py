@@ -1,3 +1,4 @@
+from sqlalchemy import Column
 from datetime import datetime
 from typing import TYPE_CHECKING
 
@@ -98,4 +99,36 @@ class CitizenRequest(Base):
     region: Mapped["Region | None"] = relationship(
         "Region",
         backref="citizen_requests",
+    )
+
+    review_status: Mapped[str] = mapped_column(
+        String(30),
+        nullable=False,
+        default="not_required",
+        index=True,
+    )
+
+    reviewer_note: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    reviewed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+
+    reviewed_category: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    reviewed_issue: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+
+    reviewed_location: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
     )

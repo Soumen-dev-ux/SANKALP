@@ -78,6 +78,13 @@ class CitizenRequestResponse(BaseModel):
     status: str
     source: str
 
+    review_status: str = "not_required"
+    reviewer_note: str | None = None
+    reviewed_at: datetime | None = None
+    reviewed_category: str | None = None
+    reviewed_issue: str | None = None
+    reviewed_location: str | None = None
+
     created_at: datetime
 
     model_config = {

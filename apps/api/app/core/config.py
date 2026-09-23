@@ -11,6 +11,10 @@ class Settings(BaseSettings):
 
   frontend_url: str = "http://localhost:5173"
 
+  ai_provider: str = "mock"
+  ai_model: str = "gpt-5-mini"
+  ai_api_key: str | None = None
+
   model_config = SettingsConfigDict(
     env_file=[
       Path(__file__).resolve().parents[1] / "api" / ".env",

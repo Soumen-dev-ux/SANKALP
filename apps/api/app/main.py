@@ -28,10 +28,32 @@ from app.api.routes.infrastructure_gap import (
 from app.api.routes.development_insights import(
     router as development_insight_router
 )
+from app.api.routes.cluster import router as cluster_router
+from app.api.routes.insight_explainations import (
+    router as insight_explanation_router,
+)
+from app.api.routes.human_reviews import router as human_review_router
+
+
+from sqlalchemy import text
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    with engine.begin() as conn:
+        conn.execute(
+            text(
+                """
+                ALTER TABLE citizen_requests ADD COLUMN IF NOT EXISTS review_status VARCHAR(30) NOT NULL DEFAULT 'not_required';
+                ALTER TABLE citizen_requests ADD COLUMN IF NOT EXISTS reviewer_note TEXT;
+                ALTER TABLE citizen_requests ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMP WITH TIME ZONE;
+                ALTER TABLE citizen_requests ADD COLUMN IF NOT EXISTS reviewed_category VARCHAR(100);
+                ALTER TABLE citizen_requests ADD COLUMN IF NOT EXISTS reviewed_issue VARCHAR(255);
+                ALTER TABLE citizen_requests ADD COLUMN IF NOT EXISTS reviewed_location VARCHAR(500);
+                """
+            )
+        )
     db = SessionLocal()
     try:
         seed_db(db)
@@ -93,6 +115,19 @@ app.include_router(
     development_insight_router,
     prefix="/api/v1"
 )
+app.include_router(
+    cluster_router,
+    prefix="/api/v1"
+)
+app.include_router(
+    insight_explanation_router,
+    prefix="/api/v1"
+)
+app.include_router(
+    human_review_router,
+    prefix="/api/v1"
+)
+
 
 @app.get("/")
 def root():
