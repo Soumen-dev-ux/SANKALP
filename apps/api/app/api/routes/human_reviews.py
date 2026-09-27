@@ -1,12 +1,16 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from app.api.dependencies.rbac import require_roles
 from app.db.session import get_db
+from app.models.user import User
 from app.schemas.human_review import (
     HumanReviewCreate,
     HumanReviewResponse,
 )
-from app.services.ai.human_review_service import submit_human_review
+from app.services.ai.human_review_service import (
+    submit_human_review,
+)
 
 
 router = APIRouter(
@@ -23,6 +27,9 @@ def review_request(
     request_id: int,
     review: HumanReviewCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(
+        require_roles("admin", "reviewer")
+    ),
 ):
     return submit_human_review(
         db=db,

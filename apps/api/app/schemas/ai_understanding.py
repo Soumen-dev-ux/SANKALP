@@ -35,4 +35,4 @@ class StructuredCitizenUnderstanding(BaseModel):
 
     location: LocationEntity
 
-    confidence: UnderstandingConfidence
+    confidence: UnderstandingConfidence | None = None

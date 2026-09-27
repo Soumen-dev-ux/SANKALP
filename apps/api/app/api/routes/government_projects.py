@@ -13,9 +13,16 @@ from app.services.government_project_service import (
 )
 
 
+from app.api.dependencies.rbac import require_roles
+
 router = APIRouter(
     prefix="/government-projects",
     tags=["Government Projects"],
+    dependencies=[
+        Depends(
+            require_roles("admin", "reviewer")
+        )
+    ],
 )
 
 

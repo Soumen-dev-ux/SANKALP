@@ -8,9 +8,21 @@ from app.services.demand_service import (
 )
 
 
+from app.api.dependencies.rbac import require_roles
+
 router = APIRouter(
     prefix="/demand",
     tags=["Demand Intelligence"],
+    dependencies=[
+        Depends(
+            require_roles(
+                "admin",
+                "reviewer",
+                "analyst",
+                "viewer",
+            )
+        )
+    ],
 )
 
 

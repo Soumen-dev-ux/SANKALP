@@ -8,11 +8,23 @@ from app.schemas.development_insight import (
 from app.services.development_insight_service import (
     get_development_insights,
 )
+from app.api.dependencies.rbac import require_roles
+from app.models.user import User
 
 
 router = APIRouter(
     prefix="/development-insights",
     tags=["Development Intelligence"],
+    dependencies=[
+        Depends(
+            require_roles(
+                "admin",
+                "reviewer",
+                "analyst",
+                "viewer",
+            )
+        )
+    ],
 )
 
 
@@ -35,4 +47,4 @@ def regional_development_insights(
             detail="Region not found",
         )
 
-    return result
+    return result

@@ -3,6 +3,7 @@ import uuid
 from sqlalchemy.orm import Session
 
 from app.models.citizen_request import CitizenRequest
+from app.models.audit_log import AuditLog
 from app.schemas.citizen_request import CitizenRequestCreate
 from app.services.ai.ai_analysis_service import analyze_citizen_text
 
@@ -44,5 +45,15 @@ def create_citizen_request(
     db.add(request)
     db.commit()
     db.refresh(request)
+
+    audit_log = AuditLog(
+        user_id=None,
+        action="CREATE_REQUEST",
+        resource_type="citizen_request",
+        resource_id=str(request.id),
+        metadata={"anonymous_reference": anonymous_reference}
+    )
+    db.add(audit_log)
+    db.commit()
 
     return request

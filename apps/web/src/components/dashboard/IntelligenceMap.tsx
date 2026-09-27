@@ -227,8 +227,8 @@ export default function IntelligenceMap({
                     {request.status}
                   </p>
 
-                  <p className="mt-2 text-sm">
-                    {request.raw_text}
+                  <p className="mt-2 text-sm text-slate-500">
+                    Location: approximate
                   </p>
                 </div>
               </Popup>

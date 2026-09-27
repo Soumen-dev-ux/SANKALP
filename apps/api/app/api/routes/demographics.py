@@ -13,9 +13,16 @@ from app.services.demographic_service import (
 )
 
 
+from app.api.dependencies.rbac import require_roles
+
 router = APIRouter(
     prefix="/demographics",
     tags=["Demographics"],
+    dependencies=[
+        Depends(
+            require_roles("admin", "reviewer")
+        )
+    ],
 )
 
 

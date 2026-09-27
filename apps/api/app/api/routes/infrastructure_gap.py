@@ -10,9 +10,21 @@ from app.services.infrastructure_gap_service import (
 )
 
 
+from app.api.dependencies.rbac import require_roles
+
 router = APIRouter(
     prefix="/infrastructure-gap",
     tags=["Infrastructure Intelligence"],
+    dependencies=[
+        Depends(
+            require_roles(
+                "admin",
+                "reviewer",
+                "analyst",
+                "viewer",
+            )
+        )
+    ],
 )
 
 

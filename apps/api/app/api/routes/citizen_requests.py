@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
+from app.core.rate_limit import limiter
 
 from app.db.session import get_db
 from app.models.citizen_request import CitizenRequest
@@ -37,7 +38,9 @@ router = APIRouter(
     response_model=CitizenRequestResponse,
     status_code=status.HTTP_201_CREATED,
 )
+@limiter.limit("30/minute")
 def submit_citizen_request(
+    request: Request,
     request_data: CitizenRequestCreate,
     db: Session = Depends(get_db),
 ):
@@ -52,7 +55,9 @@ def submit_citizen_request(
     "/analyze",
     response_model=CitizenAnalysisResponse,
 )
+@limiter.limit("20/minute")
 def analyze_request(
+    request: Request,
     request_data: CitizenAnalysisRequest,
 ):
 
@@ -90,10 +95,12 @@ def get_citizen_request(
     return request
 
 @router.post(
-    "/requests/duplicate-check",
+    "/duplicate-check",
     response_model=DuplicateCheckResponse,
 )
+@limiter.limit("20/minute")
 def duplicate_check(
+    request: Request,
     payload: CitizenRequestCreate,
     db: Session = Depends(get_db),
 ):

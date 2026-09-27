@@ -9,9 +9,22 @@ from app.services.ai.insight_provider import (
 )
 
 
+from fastapi import APIRouter, Depends
+from app.api.dependencies.rbac import require_roles
+
 router = APIRouter(
     prefix="/insight-explanations",
     tags=["AI Insight Explanation"],
+    dependencies=[
+        Depends(
+            require_roles(
+                "admin",
+                "reviewer",
+                "analyst",
+                "viewer",
+            )
+        )
+    ],
 )
 
 

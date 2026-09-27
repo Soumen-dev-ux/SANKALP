@@ -132,3 +132,21 @@ class CitizenRequest(Base):
         String(500),
         nullable=True,
     )
+
+    review_actions = relationship(
+        "HumanReviewAction",
+        back_populates="request",
+        cascade="all, delete-orphan",
+    )
+
+    @property
+    def request_id(self) -> int:
+        return self.id
+
+    @property
+    def location_text(self) -> str | None:
+        return self.reviewed_location
+
+    @property
+    def confidence_review_required(self) -> bool:
+        return self.review_status == "pending"

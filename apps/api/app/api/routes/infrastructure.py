@@ -13,9 +13,16 @@ from app.services.infrastructure_service import (
 )
 
 
+from app.api.dependencies.rbac import require_roles
+
 router = APIRouter(
     prefix="/infrastructure",
     tags=["Infrastructure"],
+    dependencies=[
+        Depends(
+            require_roles("admin", "reviewer")
+        )
+    ],
 )
 
 
