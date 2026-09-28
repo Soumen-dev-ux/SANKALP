@@ -39,6 +39,7 @@ from app.api.routes.auth import router as auth_router
 from sqlalchemy import text
 from app.api.routes.admin import router as admin_router
 from app.api.routes import reviewer 
+from app.api.routes.intelligence import router as intelligence_router
 
 
 import logging
@@ -57,8 +58,8 @@ logger = logging.getLogger("sankalp")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
-    if engine.dialect.name == "postgresql":
-        with engine.begin() as conn:
+    with engine.begin() as conn:
+        if engine.dialect.name == "postgresql":
             conn.execute(
                 text(
                     """
@@ -71,6 +72,26 @@ async def lifespan(app: FastAPI):
                     """
                 )
             )
+        else:
+            # SQLite auto-migration for existing dev/test databases
+            try:
+                res = conn.execute(text("PRAGMA table_info(citizen_requests)")).fetchall()
+                existing_cols = {row[1] for row in res}
+                if existing_cols:
+                    if "review_status" not in existing_cols:
+                        conn.execute(text("ALTER TABLE citizen_requests ADD COLUMN review_status VARCHAR(30) NOT NULL DEFAULT 'not_required'"))
+                    if "reviewer_note" not in existing_cols:
+                        conn.execute(text("ALTER TABLE citizen_requests ADD COLUMN reviewer_note TEXT"))
+                    if "reviewed_at" not in existing_cols:
+                        conn.execute(text("ALTER TABLE citizen_requests ADD COLUMN reviewed_at TIMESTAMP"))
+                    if "reviewed_category" not in existing_cols:
+                        conn.execute(text("ALTER TABLE citizen_requests ADD COLUMN reviewed_category VARCHAR(100)"))
+                    if "reviewed_issue" not in existing_cols:
+                        conn.execute(text("ALTER TABLE citizen_requests ADD COLUMN reviewed_issue VARCHAR(255)"))
+                    if "reviewed_location" not in existing_cols:
+                        conn.execute(text("ALTER TABLE citizen_requests ADD COLUMN reviewed_location VARCHAR(500)"))
+            except Exception as ex:
+                logger.warning(f"SQLite auto-migration notice: {ex}")
     try:
         db = SessionLocal()
         try:
@@ -221,6 +242,10 @@ app.include_router(
 )
 app.include_router(
     reviewer.router,
+    prefix="/api/v1"
+)
+app.include_router(
+    intelligence_router,
     prefix="/api/v1"
 )
 

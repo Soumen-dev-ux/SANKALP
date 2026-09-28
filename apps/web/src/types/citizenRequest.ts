@@ -1,9 +1,19 @@
+export interface LocationEntity {
+  text: string | null;
+  type: string;
+  name: string | null;
+  ward: string | null;
+  district: string | null;
+  landmark: string | null;
+}
+
 export interface CitizenAnalysis {
   language: string | null;
   category: string | null;
   intent: string | null;
   issue: string | null;
-  location_text: string | null;
+  location?: LocationEntity | null;
+  location_text?: string | null;
 }
 
 export interface CitizenRequestResponse {

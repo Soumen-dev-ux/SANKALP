@@ -16,6 +16,15 @@ import RegionalComparison from "../components/dashboard/RegionalComparison";
 import IntelligenceMap from "../components/dashboard/IntelligenceMap";
 import CitizenInsightFlow from "../components/dashboard/CitizenInsightFlow";
 
+// Phase 7 Intelligence Components
+import { NeedVsDevelopmentMatrix } from "../components/dashboard/NeedVsDevelopmentMatrix";
+import { IntelligenceTrendsChart } from "../components/dashboard/IntelligenceTrendsChart";
+import { InfrastructureAnalyticsView } from "../components/dashboard/InfrastructureAnalyticsView";
+import { ProjectEffectivenessView } from "../components/dashboard/ProjectEffectivenessView";
+import { HotspotMapView } from "../components/dashboard/HotspotMapView";
+import { AIIntelligenceSummaryCard } from "../components/dashboard/AIIntelligenceSummaryCard";
+import { ExportReportModal } from "../components/dashboard/ExportReportModal";
+
 import {
   getRegions,
   getRegionSummary,
@@ -25,6 +34,13 @@ import {
   getRegionProjects,
   getRegionRequests,
   getRegionInfrastructure,
+  getRegionalIntelligence,
+  getNeedVsDevelopment,
+  getRegionalTrends,
+  getInfrastructureAnalytics,
+  getProjectEffectiveness,
+  getRegionalHotspots,
+  getAIExplanation,
 } from "../services/api";
 
 import type {
@@ -37,6 +53,16 @@ import type {
   InfrastructureRecord,
   CitizenRequestLocation,
 } from "../types/dashboard";
+
+import type {
+  RegionalIntelligence,
+  NeedVsDevelopment,
+  RegionalTrends,
+  InfrastructureAnalytics,
+  ProjectEffectiveness,
+  RegionalHotspots,
+  AIExplanation,
+} from "../types/intelligence";
 
 export default function DashboardPage() {
   const [regions, setRegions] = useState<Region[]>([]);
@@ -59,6 +85,16 @@ export default function DashboardPage() {
 
   const [infrastructure, setInfrastructure] = useState<InfrastructureRecord[]>([]);
   const [requests, setRequests] = useState<CitizenRequestLocation[]>([]);
+
+  // Phase 7 State
+  const [needVsDev, setNeedVsDev] = useState<NeedVsDevelopment | null>(null);
+  const [trends, setTrends] = useState<RegionalTrends | null>(null);
+  const [trendInterval, setTrendInterval] = useState<"daily" | "weekly" | "monthly">("monthly");
+  const [infraAnalytics, setInfraAnalytics] = useState<InfrastructureAnalytics | null>(null);
+  const [projectEffectiveness, setProjectEffectiveness] = useState<ProjectEffectiveness | null>(null);
+  const [hotspots, setHotspots] = useState<RegionalHotspots | null>(null);
+  const [aiExplanation, setAiExplanation] = useState<AIExplanation | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
 
   /*
    * Load available regions once.
@@ -109,6 +145,27 @@ export default function DashboardPage() {
     }
   };
 
+  const fetchTrends = async (regionId: number, interval: "daily" | "weekly" | "monthly") => {
+    try {
+      const data = await getRegionalTrends(regionId, interval);
+      setTrends(data);
+    } catch (err) {
+      console.error("Trends load failed:", err);
+    }
+  };
+
+  const fetchAIExplanation = async (regionId: number) => {
+    try {
+      setAiLoading(true);
+      const data = await getAIExplanation(regionId);
+      setAiExplanation(data);
+    } catch (err) {
+      console.error("AI Explanation load failed:", err);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   /*
    * Load all regional intelligence whenever
    * the selected region changes.
@@ -126,6 +183,12 @@ export default function DashboardPage() {
       setProjects([]);
       setInfrastructure([]);
       setRequests([]);
+      setNeedVsDev(null);
+      setTrends(null);
+      setInfraAnalytics(null);
+      setProjectEffectiveness(null);
+      setHotspots(null);
+      setAiExplanation(null);
 
       loadAllRegionSummaries();
       return;
@@ -144,6 +207,11 @@ export default function DashboardPage() {
           projectsData,
           infrastructureData,
           requestsData,
+          needVsDevData,
+          trendsData,
+          infraAnalyticsData,
+          projEffectivenessData,
+          hotspotsData,
         ] = await Promise.all([
           getRegionSummary(selectedRegionId),
           getRegionalDemand(selectedRegionId),
@@ -152,6 +220,11 @@ export default function DashboardPage() {
           getRegionProjects(selectedRegionId),
           getRegionInfrastructure(selectedRegionId),
           getRegionRequests(selectedRegionId),
+          getNeedVsDevelopment(selectedRegionId).catch(() => null),
+          getRegionalTrends(selectedRegionId, trendInterval).catch(() => null),
+          getInfrastructureAnalytics(selectedRegionId).catch(() => null),
+          getProjectEffectiveness(selectedRegionId).catch(() => null),
+          getRegionalHotspots(selectedRegionId).catch(() => null),
         ]);
 
         setSummary(summaryData);
@@ -161,6 +234,14 @@ export default function DashboardPage() {
         setProjects(projectsData);
         setInfrastructure(infrastructureData);
         setRequests(requestsData);
+        setNeedVsDev(needVsDevData);
+        setTrends(trendsData);
+        setInfraAnalytics(infraAnalyticsData);
+        setProjectEffectiveness(projEffectivenessData);
+        setHotspots(hotspotsData);
+
+        // Fetch AI narrative asynchronously
+        fetchAIExplanation(selectedRegionId);
       } catch (err) {
         console.error(err);
         setError("Unable to load regional intelligence data.");
@@ -175,7 +256,7 @@ export default function DashboardPage() {
   const selectedRegionName =
     selectedRegionId === "all"
       ? "All Regions"
-      : regions.find((r) => r.id === selectedRegionId)?.name;
+      : regions.find((r) => r.id === selectedRegionId)?.name || "Region";
 
   if (loading) {
     return (
@@ -205,8 +286,8 @@ export default function DashboardPage() {
 
         {selectedRegionId === "all" && (
           <DashboardSection
-            title="All Regions Overview"
-            description="A cross-region view of available citizen, infrastructure, project, and demographic records."
+            title="All Regions Intelligence Overview"
+            description="A cross-region comparative matrix synthesizing demand signals, infrastructure coverage, and project allocations."
           >
             {regionLoading ? (
               <div className="rounded-xl border border-slate-200 bg-white p-8 text-center">
@@ -227,6 +308,70 @@ export default function DashboardPage() {
             </div>
           ) : (
             <>
+              {/* Phase 7 Export & Reporting Bar */}
+              <div className="mb-6">
+                <ExportReportModal
+                  regionId={typeof selectedRegionId === "number" ? selectedRegionId : null}
+                  regionName={selectedRegionName}
+                />
+              </div>
+
+              {/* Phase 7 AI Intelligence Narrative */}
+              <div className="mb-6">
+                <AIIntelligenceSummaryCard
+                  data={aiExplanation}
+                  loading={aiLoading}
+                  onRequestRefresh={() => {
+                    if (typeof selectedRegionId === "number") {
+                      fetchAIExplanation(selectedRegionId);
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Phase 7 Need vs Development Matrix */}
+              <div className="mb-6">
+                <NeedVsDevelopmentMatrix
+                  data={needVsDev}
+                  loading={regionLoading}
+                />
+              </div>
+
+              {/* Phase 7 Time Series & Citizen Demand Trends */}
+              <div className="mb-6">
+                <IntelligenceTrendsChart
+                  data={trends}
+                  loading={regionLoading}
+                  onIntervalChange={(newIntv) => {
+                    setTrendInterval(newIntv);
+                    if (typeof selectedRegionId === "number") {
+                      fetchTrends(selectedRegionId, newIntv);
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Phase 7 Infrastructure Analytics & Project Effectiveness */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <InfrastructureAnalyticsView
+                  data={infraAnalytics}
+                  loading={regionLoading}
+                />
+                <ProjectEffectivenessView
+                  data={projectEffectiveness}
+                  loading={regionLoading}
+                />
+              </div>
+
+              {/* Phase 7 Geographic Hotspots */}
+              <div className="mb-6">
+                <HotspotMapView
+                  data={hotspots}
+                  loading={regionLoading}
+                />
+              </div>
+
+              {/* Existing Baseline Visualizations */}
               <RegionalSummaryCards summary={summary} />
 
               <DashboardSection
@@ -271,15 +416,14 @@ export default function DashboardPage() {
               </DashboardSection>
 
               <DashboardSection
-  title="Citizen Voice to Development Intelligence"
-  description="Trace how citizen-reported needs become structured regional analytical signals."
->
-  <CitizenInsightFlow
-    demand={demand}
-    insights={insights?.insights ?? []}
-  />
-</DashboardSection>
-
+                title="Citizen Voice to Development Intelligence"
+                description="Trace how citizen-reported needs become structured regional analytical signals."
+              >
+                <CitizenInsightFlow
+                  demand={demand}
+                  insights={insights?.insights ?? []}
+                />
+              </DashboardSection>
 
               <DashboardSection
                 title="Regional Intelligence Overview"

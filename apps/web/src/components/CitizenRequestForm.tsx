@@ -90,8 +90,18 @@ function CitizenRequestForm({
           }
         );
 
+      const rawAnalysis = response.data;
+      const extractedLocText =
+        rawAnalysis.location_text ||
+        rawAnalysis.location?.text ||
+        rawAnalysis.location?.name ||
+        null;
+
       onAnalysisComplete(
-        response.data,
+        {
+          ...rawAnalysis,
+          location_text: extractedLocText,
+        },
         text.trim(),
         inputSource
       );

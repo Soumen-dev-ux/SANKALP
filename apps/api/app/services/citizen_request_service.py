@@ -2,6 +2,7 @@ import uuid
 
 from sqlalchemy.orm import Session
 
+from app.models.region import Region
 from app.models.citizen_request import CitizenRequest
 from app.models.audit_log import AuditLog
 from app.schemas.citizen_request import CitizenRequestCreate
@@ -27,6 +28,16 @@ def create_citizen_request(
             else "not_required"
         )
 
+    region_id = getattr(request_data, "region_id", None)
+    if not region_id:
+        first_region = db.query(Region).first()
+        if first_region:
+            region_id = first_region.id
+
+    extracted_location = None
+    if analysis and hasattr(analysis, "location") and analysis.location:
+        extracted_location = getattr(analysis.location, "text", None) or getattr(analysis.location, "name", None)
+
     request = CitizenRequest(
         anonymous_reference=anonymous_reference,
         raw_text=request_data.raw_text,
@@ -34,12 +45,13 @@ def create_citizen_request(
         category=request_data.category or getattr(analysis, "category", None),
         intent=request_data.intent or getattr(analysis, "intent", None),
         issue=request_data.issue or getattr(analysis, "issue", None),
-        region_id=getattr(request_data, "region_id", None),
+        region_id=region_id,
         latitude=request_data.latitude,
         longitude=request_data.longitude,
         source=request_data.source,
         status="submitted",
         review_status=review_status,
+        reviewed_location=extracted_location,
     )
 
     db.add(request)

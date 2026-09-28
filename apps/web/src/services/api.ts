@@ -260,4 +260,113 @@ export const reviewCitizenRequest = async (
   return response.data;
 };
 
-export default api;
+// --- Phase 7 Intelligence APIs ---
+import type {
+  RegionalIntelligence,
+  MultiRegionCompare,
+  RegionalTrends,
+  InfrastructureAnalytics,
+  ProjectEffectiveness,
+  RegionalHotspots,
+  NeedVsDevelopment,
+  AIExplanation,
+} from "../types/intelligence";
+
+export const getRegionalIntelligence = async (
+  regionId: number
+): Promise<RegionalIntelligence> => {
+  const response = await api.get<RegionalIntelligence>(
+    `/intelligence/regions/${regionId}`
+  );
+  return response.data;
+};
+
+export const getMultiRegionCompare = async (): Promise<MultiRegionCompare> => {
+  const response = await api.get<MultiRegionCompare>(
+    `/intelligence/regions/compare`
+  );
+  return response.data;
+};
+
+export const getRegionalTrends = async (
+  regionId: number,
+  interval: "daily" | "weekly" | "monthly" = "monthly"
+): Promise<RegionalTrends> => {
+  const response = await api.get<RegionalTrends>(
+    `/intelligence/regions/${regionId}/trends?interval=${interval}`
+  );
+  return response.data;
+};
+
+export const getInfrastructureAnalytics = async (
+  regionId: number
+): Promise<InfrastructureAnalytics> => {
+  const response = await api.get<InfrastructureAnalytics>(
+    `/intelligence/regions/${regionId}/infrastructure`
+  );
+  return response.data;
+};
+
+export const getProjectEffectiveness = async (
+  regionId: number
+): Promise<ProjectEffectiveness> => {
+  const response = await api.get<ProjectEffectiveness>(
+    `/intelligence/regions/${regionId}/projects`
+  );
+  return response.data;
+};
+
+export const getRegionalHotspots = async (
+  regionId: number,
+  gridSize: number = 0.05
+): Promise<RegionalHotspots> => {
+  const response = await api.get<RegionalHotspots>(
+    `/intelligence/regions/${regionId}/hotspots?grid_size=${gridSize}`
+  );
+  return response.data;
+};
+
+export const getNeedVsDevelopment = async (
+  regionId: number
+): Promise<NeedVsDevelopment> => {
+  const response = await api.get<NeedVsDevelopment>(
+    `/intelligence/regions/${regionId}/need-vs-development`
+  );
+  return response.data;
+};
+
+export const getAIExplanation = async (
+  regionId: number,
+  category?: string
+): Promise<AIExplanation> => {
+  const response = await api.post<AIExplanation>(
+    `/intelligence/explanation`,
+    { region_id: regionId, category }
+  );
+  return response.data;
+};
+
+export const downloadIntelligenceExport = async (
+  regionId?: number,
+  format: "json" | "csv" = "json"
+): Promise<void> => {
+  const url = `/intelligence/export?format=${format}${
+    regionId ? `&region_id=${regionId}` : ""
+  }`;
+  const response = await api.get(url, { responseType: "blob" });
+  const blob = new Blob([response.data], {
+    type: format === "json" ? "application/json" : "text/csv",
+  });
+  const downloadUrl = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = downloadUrl;
+  link.setAttribute(
+    "download",
+    `sankalp_intelligence_${regionId || "all"}.${format}`
+  );
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+};
+
+export default api;
